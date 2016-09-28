@@ -1,5 +1,7 @@
 # PhoneEffect
 ## 导入机器人用户
+>微博用户数据采集使用了第三方工具：[集搜客GooSeeker](http://www.gooseeker.com/res/softdetail_6.html)，由于工具本身的导出数据下载有积分限制，超出部分要收费，所以我手动解析了抓出的压缩包数据
+
 执行
 ```shell
     $ ./bin/import [压缩文件路径]
