@@ -1,0 +1,152 @@
+#!/usr/bin/env node
+
+/**
+ * 流程测试
+ * Created by yinfxs on 16-9-28.
+ */
+
+'use strict';
+
+const path = require('path');
+const fs = require('fs');
+const fsx = require('fs-extra');
+const unzip = require('unzip');
+const uuid = require('node-uuid');
+const _ = require('lodash');
+const sql = require('mssql');
+const parseString = require('xml2js').parseString;
+
+const area = require('../lib/area');
+
+const array = [], flags = ['转发', '评论'], imageSize = 300, debug = false;
+const arg = process.argv[2];
+
+if (!debug && '--help' === arg) {
+    console.log('\n  使用: import [压缩文件路径]\n\n');
+    console.log('  --help                     查看帮助\n');
+    process.exit(0);
+}
+
+if (!debug && null == arg) {
+    console.log('请正确指定参数');
+    process.exit(0);
+}
+
+const zippath = !debug ? arg : '/home/yinfx/下载/p1869328894.zip';
+const basedir = zippath.substring(0, zippath.lastIndexOf('.'));
+
+fsx.ensureDirSync(basedir);
+
+//1.解压
+fs.createReadStream(zippath).pipe(unzip.Extract({path: basedir})).on('close', run);
+
+function run() {
+    console.log('操作日志：解压采集文件完毕！');
+    const files = fs.readdirSync(basedir);
+    if (!files || files.length == 0) {
+        console.log('操作日志：压缩包内无文件');
+        process.exit(0);
+    }
+    console.log(`操作日志：共检测到${files.length}个文件！`);
+    //2.解析xml
+    files.forEach(function (file) {
+        const p = path.resolve(basedir, file);
+        const data = fs.readFileSync(p);
+        const xml = data.toString();
+        parseString(xml, {explicitArray: false}, function (err, result) {
+            try {
+                const list = result.extraction['列表'];
+                const items = list.item[flags[0]] ? list.item[flags[0]].item : list.item[flags[1]].item;
+                if (!items || items.length == 0) return;
+                items.forEach(function (item) {
+                    if (!item || !item['博主头像'] || !item['博主']) return;
+                    array.push({
+                        Nickname: item['博主'],
+                        Headimgurl: item['博主头像'].replace(/\.50\//, '.' + imageSize + '/')
+                    });
+                });
+            } catch (e) {
+                return console.error('操作日志：解析数据异常，' + e);
+            }
+        });
+    });
+    //3.随机生成区域和openid记录
+    array.forEach(function (item) {
+        item.Sex = _.random(0, 1);//性别：0女、1男
+        item.IsSaler = 0;
+        item.Asset = 0;
+        item.MerchantNo = 0;
+        item.Saler_MerchantNo = 0;
+        item.Country = '中国';
+        item.OpenId = 'robot-' + uuid.v1();
+        //设置区域
+        let pro = null, city = null;
+        while (true) {
+            pro = area[_.random(0, area.length - 1)];
+            if (pro.name.length < 10) break;//长度限制
+        }
+        while (true) {
+            city = pro.items[_.random(0, pro.items.length - 1)];
+            if (city.name.length < 10) break;//长度限制
+        }
+        item.Province = pro.name;
+        item.City = city.name;
+    });
+    //4.插入数据
+    sql.connect('mssql://sa:wosoft!Admin@121.41.46.25/PhoneEffect_Dev').then(function () {
+        console.log('操作日志：数据库连接成功!');
+        //1.查询机器人用户
+        sql.query`select id,Nickname from WXUsers where Openid like 'robot-%'`.then(function (wxusers) {
+            console.log(`操作日志：当前系统内存在${wxusers.length}个机器人用户！`);
+            const map = {};
+            wxusers.forEach(function (item) {
+                if (!item || !item.Nickname) return;
+                map[item.Nickname] = item;
+            });
+            //构建表对象
+            const table = new sql.Table('WXUsers');
+            table.create = false;
+            table.columns.add('Openid', sql.NVarChar(100), {nullable: true});
+            table.columns.add('Headimgurl', sql.NVarChar(150), {nullable: true});
+            table.columns.add('Nickname', sql.NVarChar(50), {nullable: true});
+            table.columns.add('Country', sql.NVarChar(10), {nullable: true});
+            table.columns.add('Province', sql.NVarChar(10), {nullable: true});
+            table.columns.add('City', sql.NVarChar(10), {nullable: true});
+            table.columns.add('Sex', sql.Int, {nullable: false});
+            table.columns.add('IsSaler', sql.Bit, {nullable: false});
+            table.columns.add('Asset', sql.Int, {nullable: false});
+            table.columns.add('MerchantNo', sql.Int, {nullable: false});
+            table.columns.add('Saler_MerchantNo', sql.Int, {nullable: false});
+            //添加行
+            array.forEach(function (item, i) {
+                if (!item || !item.Nickname || map[item.Nickname]) return;
+                table.rows.add(
+                    item.OpenId, item.Headimgurl, item.Nickname,
+                    item.Country, item.Province, item.City, item.Sex,
+                    item.IsSaler, item.Asset, item.MerchantNo, item.Saler_MerchantNo
+                );
+            });
+            // if (1 == 1) process.exit(0);//测试代码
+            if (table.rows.length == 0) {
+                console.log(`操作日志：无可插入记录！`);
+                process.exit(0);
+            }
+            //3.执行插入操作
+            const request = new sql.Request();
+            request.bulk(table, function (err, rowCount) {
+                if (err) {
+                    console.error('操作日志：执行bulk异常，' + err);
+                    process.exit(0);
+                }
+                console.log(`操作日志：成功插入${rowCount}行记录！`);
+                process.exit(0);
+            });
+        }).catch(function (err) {
+            console.error('操作日志：查询机器人用户信息异常，' + err);
+            process.exit(0);
+        });
+    }).catch(function (err) {
+        console.error('操作日志：数据库连接异常，' + err);
+        process.exit(0);
+    });
+}

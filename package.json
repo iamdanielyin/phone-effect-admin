@@ -1,0 +1,31 @@
+{
+  "name": "phone-effect-admin",
+  "version": "1.0.0",
+  "description": "PhoneEffect",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yinfxs/phone-effect-admin.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yinfxs/phone-effect-admin/issues"
+  },
+  "bin": {
+    "import": "./bin/import"
+  },
+  "homepage": "https://github.com/yinfxs/phone-effect-admin#readme",
+  "dependencies": {
+    "mssql": "^3.3.0"
+  },
+  "devDependencies": {
+    "cheerio": "^0.22.0",
+    "fs-extra": "^0.30.0",
+    "lodash": "^4.16.2",
+    "node-uuid": "^1.4.7",
+    "unzip": "^0.1.11",
+    "xml2js": "^0.4.17"
+  }
+}
