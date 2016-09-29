@@ -3,12 +3,14 @@
   "version": "1.0.0",
   "description": "PhoneEffect",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "start": "node index.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/yinfxs/phone-effect-admin.git"
   },
-  "author": "",
+  "author": "yinfxs",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/yinfxs/phone-effect-admin/issues"
@@ -24,6 +26,8 @@
     "cheerio": "^0.22.0",
     "fs-extra": "^0.30.0",
     "lodash": "^4.16.2",
+    "node-fetch": "^1.6.3",
+    "node-schedule": "^1.1.1",
     "node-uuid": "^1.4.7",
     "unzip": "^0.1.11",
     "xml2js": "^0.4.17"
