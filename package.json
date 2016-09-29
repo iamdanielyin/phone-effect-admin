@@ -31,5 +31,13 @@
     "node-uuid": "^1.4.7",
     "unzip": "^0.1.11",
     "xml2js": "^0.4.17"
+  },
+  "config": {
+    "db": "mssql://sa:wosoft!Admin@121.41.46.25/PhoneEffect_Dev",
+    "rule": "",
+    "robot": {
+      "rule": "*/10 * * * * *",
+      "url": "http://tphoneeffect.wosoft.me/robot/bid"
+    }
   }
 }
