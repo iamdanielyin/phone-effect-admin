@@ -14,7 +14,6 @@ moment.locale('zh-cn');
 const ibird = require('ibird');
 
 //导入模块
-const preset = require('./modules/preset');// 导入预置模块
 const business = require('./modules/business');// 导入预置模块
 
 ibird.initialize({
@@ -66,7 +65,6 @@ ibird.initialize({
         "admin"
     ],
     "modules": [
-        preset(ibird),
         business(ibird),
     ],
 
@@ -77,5 +75,3 @@ ibird.initialize({
         }
     }
 }).start();
-
-// module.exports = require('./lib/robot');
