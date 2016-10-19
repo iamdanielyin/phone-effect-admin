@@ -11,7 +11,7 @@ const path = require('path');
 const webpack = require('webpack');
 const WebpackDevServer = require("webpack-dev-server");
 const config = require('./webpack.config');
-const port = 1220, serverPort = 3001;
+const port = 1221, serverPort = 3001;
 
 // webpack
 gulp.task('webpack', function (callback) {

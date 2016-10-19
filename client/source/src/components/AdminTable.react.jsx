@@ -112,7 +112,7 @@ const AdminTable = React.createClass({
         const colsTh = [], colsOrder = [], columns = [];
         colsTh.push(<th key={uuid.v4()}><input type="checkbox" className='ibird-table-select-all'
                                                style={{opacity: '0'}}/></th>);
-        console.log(fields);
+        // console.log(fields);
         Object.keys(fields).map(function (key) {
             const display = fields[key].display || {};
             if (!fields[key] || !fields[key].label || ['ref', 'refs', 'files', 'textarea', 'password'].indexOf(fields[key].ctrltype) != -1 || display.table == false) return;
@@ -127,7 +127,8 @@ const AdminTable = React.createClass({
             }
 
             colsTh.push(
-                <th style={{cursor: 'pointer', minWidth: '80px'}} onClick={self._onSortAction} data-code={key}
+                <th style={{cursor: 'pointer', minWidth: '80px', width: '100%'}} onClick={self._onSortAction}
+                    data-code={key}
                     key={key}>{fieldConfig.column && _.isFunction(fieldConfig.column) ? fieldConfig.column({
                     $this: self,
                     key: key,
@@ -137,8 +138,7 @@ const AdminTable = React.createClass({
             colsOrder.push(key);
             columns.push({data: key});
         });
-        colsTh.push(<th key={uuid.v4()}>操作</th>);
-        console.log(colsTh);
+        colsTh.push(<th key={uuid.v4()} style={{minWidth: '80px', width: '100%'}}>操作</th>);
         this.setState({
             colsTh: colsTh,
             colsOrder: colsOrder,
@@ -191,7 +191,7 @@ const AdminTable = React.createClass({
     },
     _customActionsAction(e){
         const actions = this.state.actions;
-        const aid = e.target.getAttribute('data-aid');
+        const aid = e.target.getAttribute('data-aid') || e.target.parentNode.getAttribute('data-aid');
         if (!aid || !actions[aid] || !_.isFunction(actions[aid].action)) return;
         actions[aid].action({$this: this, data: actions[aid].data, e: e});
     },
@@ -259,8 +259,8 @@ const AdminTable = React.createClass({
                         <button id={item._id} className="btn btn-danger btn-xs" onClick={self._deleteAction}>
                             <i className="fa fa-minus"></i>
                         </button>
-                        {views}
                     </div>
+                    {views}
                 </td>
             );
             trs.push(<tr key={uuid.v4()}>{tds}</tr>);
@@ -283,11 +283,9 @@ const AdminTable = React.createClass({
             const view = item.render({
                 $this: self,
                 data: data,
-                key: j,
-                action: self._customActionsAction,
-                aid: aid
+                action: self._customActionsAction
             });
-            views.push(view);
+            views.push(<span key={j} data-aid={aid} className="ibird-table-actions">{view}</span>);
             actions[aid] = {
                 action: item.action,
                 data: data,
@@ -346,47 +344,53 @@ const AdminTable = React.createClass({
         return (
             <div className="row">
                 <div className="col-xs-12">
-                    <div className="box">
+                    <div className="box" style={{minWidth: '270px'}}>
                         <div className="box-header">
-                            <h3 className="box-title">{this.props.schema.label}</h3>
-                            <div className="box-tools pull-right ibird-table-tools">
-                                {this.state.customToolbarViews}
-                                <div className="input-group input-group-sm"
-                                     style={{
-                                         width: '250px',
-                                         background: 'transparent',
-                                         textAlign: 'right',
-                                         marginLeft: '5px',
-                                         display: toolbarShow == true ? 'inline-block' : 'none'
-                                     }}>
-                                    <input type="text" name="table_search" className="form-control"
-                                           placeholder="请输入关键字" ref="keyword"
-                                           defaultValue={pagingParams.keyword || ''} style={{width: '150px'}}/>
-                                    <div className="input-group-btn">
-                                        <button className="btn btn-primary" onClick={self._onKeywordAction}>
-                                            <i className="fa fa-search"></i>
-                                        </button>
-                                        <Link
-                                            to={{
-                                                pathname: "/home/" + this.props.module + "/" + this.props.path,
-                                                query: {f: uuid.v4()},
-                                                state: {
-                                                    item: self.props.item
-                                                }
-                                            }}
-                                            className="btn btn-primary">
-                                            <i className="fa fa-plus"></i>
-                                        </Link>
-                                        <button className="btn btn-primary" onClick={self._batchDeleteAction}>
-                                            <i className="fa fa-minus"></i>
-                                        </button>
-                                    </div>
+                            <div className="row">
+                                <div className="col-xs-12 col-md-12" style={{marginBottom: '5px'}}>
+                                    <h3 className="box-title">{this.props.schema.label}</h3>
+                                    <div className="box-tools pull-right ibird-table-tools">
+                                        <div className="input-group input-group-sm"
+                                             style={{
+                                                 width: '250px',
+                                                 background: 'transparent',
+                                                 textAlign: 'right',
+                                                 marginLeft: '5px',
+                                                 display: toolbarShow == true ? 'inline-block' : 'none'
+                                             }}>
+                                            <input type="text" name="table_search" className="form-control"
+                                                   placeholder="请输入关键字" ref="keyword"
+                                                   defaultValue={pagingParams.keyword || ''} style={{width: '150px'}}/>
+                                            <div className="input-group-btn">
+                                                <button className="btn btn-primary" onClick={self._onKeywordAction}>
+                                                    <i className="fa fa-search"></i>
+                                                </button>
+                                                <Link
+                                                    to={{
+                                                        pathname: "/home/" + this.props.module + "/" + this.props.path,
+                                                        query: {f: uuid.v4()},
+                                                        state: {
+                                                            item: self.props.item
+                                                        }
+                                                    }}
+                                                    className="btn btn-primary">
+                                                    <i className="fa fa-plus"></i>
+                                                </Link>
+                                                <button className="btn btn-primary" onClick={self._batchDeleteAction}>
+                                                    <i className="fa fa-minus"></i>
+                                                </button>
+                                            </div>
 
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col-xs-12 col-md-12">
+                                    {this.state.customToolbarViews}
                                 </div>
                             </div>
                         </div>
                         <div className="box-body table-responsive no-padding">
-                            <table className="table table-hover">
+                            <table className="table table-hover ibird-table">
                                 <thead>
                                 <tr>{this.state.colsTh}</tr>
                                 </thead>

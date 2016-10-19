@@ -97,10 +97,12 @@ const Admin = React.createClass({
         });
         return list;
     },
-    componentDidMount(){
+    componentWillMount(){
         if (!localStorage.getItem('access_token')) return this.context.router.push('/signin');
         this.getPrivateConfig();
         this.getProfile();
+    },
+    componentDidMount(){
     },
     _onLogout(){
         const self = this;
@@ -148,7 +150,7 @@ const Admin = React.createClass({
                                             <img src={avatar} className="img-circle" alt={username}/>
                                             <p>
                                                 {username}
-                                                <small>注册日期：{moment(this.state.profile.ts, 'x').format('llll')}</small>
+                                                {/*<small>注册日期：{moment(this.state.profile.ts, 'x').format('llll')}</small>*/}
                                             </p>
                                         </li>
                                         <li className="user-footer">

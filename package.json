@@ -36,11 +36,11 @@
     "xml2js": "^0.4.17"
   },
   "config": {
-    "db": "mssql://sa:wosoft!Admin@121.41.46.25/PhoneEffect_Dev",
+    "db": "mssql://sa:wosoft!Admin@121.41.46.25/PhoneEffect",
     "rule": "",
     "robot": {
       "rule": "*/10 * * * * *",
-      "url": "http://tphoneeffect.wosoft.me/robot/bid"
+      "url": "http://phoneeffect.wosoft.me/robot/bid"
     }
   }
 }

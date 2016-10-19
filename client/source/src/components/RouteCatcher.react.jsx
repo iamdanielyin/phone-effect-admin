@@ -15,7 +15,7 @@ const CodeUtils = require('../utils/CodeUtils');
 
 
 
-const cv = JSON.parse(CodeUtils.decodeBase64(localStorage.getItem('C_V'), 5)) || [];
+var cv = JSON.parse(CodeUtils.decodeBase64(localStorage.getItem('C_V'), 5)) || [];
 
 const RouteCatcher = React.createClass({
     contextTypes: {
@@ -24,8 +24,12 @@ const RouteCatcher = React.createClass({
     getInitialState(){
         return {}
     },
+    componentWillMount(){
+        console.log('componentWillMount');
+        cv = JSON.parse(CodeUtils.decodeBase64(localStorage.getItem('C_V'), 5)) || [];
+    },
     componentDidMount(){
-
+        console.log('componentDidMount');
     },
     getSchemaByCode(moduleCode, modelCode){
         let schema = {};

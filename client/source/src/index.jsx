@@ -12,8 +12,6 @@ const Router = require('react-router').Router;
 const Route = require('react-router').Route;
 const hashHistory = require('react-router').hashHistory;
 
-const MyButtonController = require('./components/MyButtonController');
-
 const App = require('./components/App.react');
 const Signin = require('./components/Signin.react');
 const Signup = require('./components/Signup.react');

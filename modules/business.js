@@ -3,7 +3,7 @@
  * Created by yinfxs on 16-8-6.
  */
 const uuid = require('node-uuid');
-const _ = require('underscore');
+const _ = require('lodash');
 const fetch = require('node-fetch');
 const sql = require('mssql');
 const robot = require('../lib/robot');
@@ -175,7 +175,7 @@ module.exports = function (ibird) {
                                     console.error('操作日志：接口异常，' + json.Msg);
                                     return task.cancel();
                                 }
-                                console.log(`操作日志：刷单成功，用户${user.Nickname}购买了${product.Name + req.Count}人次`);
+                                console.log(`操作日志：刷单成功，用户${user.Nickname}购买了${product.Name + reqObject.Count}人次`);
                                 console.log('--------------------------');
                             }).catch(function (err) {
                                 console.error('操作日志：接口异常，' + err);

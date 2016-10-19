@@ -27,7 +27,7 @@ fsx.removeSync(tmpPath);//删除临时文件
 
 const plugins = [
     new HtmlWebpackPlugin({
-        title: '手机效应 | 后台管理',
+        title: 'ibird-client | ibird',
         template: path.resolve(__dirname, 'src/templates/index.ejs')
     }),
     new webpack.ProvidePlugin({
@@ -45,11 +45,6 @@ const plugins = [
 
 if (isProduction) {
     plugins.push(
-        // new webpack.DefinePlugin({
-        //     'process.env': {
-        //         'NODE_ENV': 'production'
-        //     }
-        // }),
         new webpack.optimize.UglifyJsPlugin({
             compress: {
                 warnings: false

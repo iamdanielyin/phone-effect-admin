@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "build": "gulp build",
-    "hot": "NODE_ENV='develop' gulp hot",
+    "hot": "NODE_ENV=develop gulp hot",
     "watch": "gulp watch",
-    "deploy": "NODE_ENV='production' gulp deploy"
+    "deploy": "NODE_ENV=production gulp deploy"
   },
   "repository": {
     "type": "git",

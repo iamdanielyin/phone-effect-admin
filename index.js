@@ -43,7 +43,7 @@ ibird.initialize({
             password: 'wosoft!Admin',
             server: '121.41.46.25',
             // database: 'ibird',
-            database: 'PhoneEffect_Dev',
+            database: 'PhoneEffect',
             pool: {
                 max: 10,
                 min: 0,
